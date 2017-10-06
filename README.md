@@ -1,5 +1,11 @@
 ## Redis cheatsheet
 
+- [Links](#links)
+- [Run](#run)
+- [Basics](#basics)
+- [Data Structures](#data-structures)
+- [Advanced](#advanced)
+
 ### Links
 
 * [Redis documentation](https://redis.io/documentation)
