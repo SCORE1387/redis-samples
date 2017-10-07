@@ -1,0 +1,129 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: redis
+  annotations:
+    openshift.io/display-name: Redis server (persistent)
+    description: Redis database template
+    iconClass: icon-redis
+    tags: database,redis
+objects:
+- kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: "${PVC_NAME}"
+    labels:
+      app: "${SERVICE_NAME}"
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: "${PVC_SIZE}"
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    name: ${SERVICE_NAME}-conf
+  data:
+    redis.conf: |
+      #!/bin/bash
+      set -xe
+      if [ ! -f /etc/gitlab-runner/config.toml ]; then
+        cp /scripts/config.toml /etc/gitlab-runner/
+      fi
+      # Start the runner
+      /entrypoint run --user=gitlab-runner \
+        --working-directory=/home/gitlab-runner
+    
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${SERVICE_NAME}"
+    labels:
+      app: "${SERVICE_NAME}"
+  spec:
+    replicas: 1
+    selector:
+      app: "${SERVICE_NAME}"
+      deploymentconfig: "${SERVICE_NAME}"
+    strategy:
+      type: Rolling 
+    template:
+      metadata:
+        labels:
+          app: "${SERVICE_NAME}"
+          deploymentconfig: "${SERVICE_NAME}"
+      spec:
+        containers:
+        - image: "${IMAGE}"
+          name: "${SERVICE_NAME}"
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 6379
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
+          volumeMounts:
+          - mountPath: "/data"
+            name: redis-volume-1
+          - mountPath: "/config"
+            name: redis-config-1
+        volumes:
+        - name: redis-volume-1
+          persistentVolumeClaim:
+            claimName: "${PVC_NAME}"
+        - name: redis-config-1
+          configMap:
+            name: ${SERVICE_NAME}-conf
+    test: false
+    triggers:
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: "${SERVICE_NAME}"
+    labels:
+      app: "${SERVICE_NAME}"
+  spec:
+    ports:
+    - name: 6379-tcp
+      port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: "${SERVICE_NAME}"
+      deploymentconfig: "${SERVICE_NAME}"
+parameters:
+- name: PVC_NAME
+  displayName: PVC Name
+  description: Name of the persistent volume claim to be created for your new redis installation
+  value: redis-pvc
+  required: true
+- name: PVC_SIZE
+  displayName: PVC Size
+  description: Size of the PVC to be created (valid units is Mi, Gi, Ti of bytes)
+  value: 1Gi
+  required: true
+- name: SERVICE_NAME
+  displayName: Service Name
+  description: Name of service, DC, pod to be created by your request (e.g. if you have another redis you would want to be named this instance 'redis1'
+  value: redis
+  required: true
+- name: IMAGE
+  displayName: Docker image
+  description: Docker  image to deploy
+  value: docker.netcracker.com:17008/redis:4.0.2
+  required: true

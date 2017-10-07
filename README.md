@@ -4,7 +4,9 @@
 - [Run](#run)
 - [Basics](#basics)
 - [Data Structures](#data-structures)
-- [Advanced](#advanced)
+- [Publish/Subscribe](#publish-subscribe)
+- [Transactions](#transactions)
+- [Misc](#misc)
 
 ### Links
 
@@ -17,7 +19,12 @@ Redis uses 6379 port by default.
 
 Run Redis using docker:
 ```
-    docker run --name redis -d redis
+    docker run --name redis -p 6379:6379 -d redis
+```
+
+Connect to Redis using redis-cli in docker:
+```
+    docker exec container-id -it redis-cli
 ```
 
 ### Basics
@@ -93,6 +100,26 @@ The -2 for the `TTL` of the key means that the key does not exist (anymore). A -
 ```
 
 ---
+
+There are more useful commands:
+
+`APPEND key value` - appends value to the end of string
+
+`GETRANGE key start end` - get substring
+
+`GETSET key value` - get and set in one operation 
+
+`MGET key value [key value ...]` - multiple get 
+
+`MSET key value [key value ...]` - multiple set
+
+`MSETNX key value [key value ...]` - multiple set if not exists
+
+`SETEX key seconds value` - set a value that expires
+
+`SETRANGE key offset value` - rewrite a substring
+
+`STRLEN key` - get length of string
 
 ### Data Structures
 
@@ -252,9 +279,35 @@ Numerical values in hash fields are handled exactly the same as in simple string
     HINCRBY user:1000 visits 1 => 1
 ```
 
-### Advanced
+### Publish/Subscribe
 
-Switch database:
+```
+PUBSUB <subcommand> ... args ...
+PUBSUB CHANNELS [pattern]
+PUBSUB NUMSUB [channel-1 ... channel-N]
+PSUBSCRIBE pattern [pattern ...]
+SUBSCRIBE channel [channel ...]
+```
+
+Example:
+
+```
+    redis-client1: subscribe channel1
+    redis-client2: publish channel1 "test str"
+```
+
+### Transactions
+
+`MULTI` - Start a transaction
+`EXEC` - Execute a transaction
+
+`DISCARD` - Ditch a transaction
+`WATCH` - Start watching a key for changes
+`UNWATCH` - Stop watching a key for changes
+
+### Misc
+
+Switch database (0-15 values are allowed):
 
 ```
     SELECT 1
@@ -265,3 +318,66 @@ Clean database:
 ```
     FLUSHDB
 ```
+
+Clean all databases:
+
+```
+    FLUSHALL
+```
+
+List all matching keys:
+```
+    KEYS pattern
+```
+
+List clients:
+
+```
+    CLIENT LIST
+```
+
+Asynchronously save the dataset to disc
+
+```
+    BGSAVE
+```
+
+Get the number of keys in the selected database:
+
+```
+    DBSIZE
+```
+
+Listen for all requests received by the server in real time:
+
+```
+    MONITOR
+```
+
+Disable some command:
+
+```
+    rename-command FLUSHALL 
+```
+
+### Replication
+
+Redis поддерживает репликацию, которая означает, что все данные, которые попадают
+на один узел Redis (который называется master) будут попадать также и на другие узлы
+(называются slave). Для конфигурирования slave-узлов можно изменить опцию slaveof
+или выполнить аналогичную по написанию команду (узлы, запущенные без подобных
+опций являются master-узлами).
+Репликация помогает защитить ваши данные, копируя их на другие сервера. Репликация
+также может быть использована для увеличения производительности, т.к. запросы на
+чтение могут обслуживаться slave-узлами. Эти узлы могут ответить слегка устаревшими
+данными, но для большинства приложений это приемлемо.
+К сожалению, система репликации Redis еще не поддерживает автоматическую
+отказоустойчивость. Если master-узел выходит из строя, необходимо вручную выбрать
+новый из slave-узлов. Необходимо использовать традиционные утилиты, использующие
+мониторинг и специальные скрипты для переключения master-узлов, если вам необходима
+устойчивая к сбоям система.
+
+Configuring slave:
+
+`slaveof 192.168.1.1 6379`
+
