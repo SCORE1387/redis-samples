@@ -20,6 +20,8 @@ Redis stores all data in-memory and periodically flushes it to disk using snapsh
 
 Alternatively Redis may use append mode to append each change to file.
 
+Redis always works in a single thread!
+
 ### Run
 
 Redis uses 6379 port by default.
