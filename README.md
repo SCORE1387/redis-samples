@@ -272,6 +272,8 @@ Numerical values in hash fields are handled exactly the same as in simple string
 
 ### Publish/Subscribe
 
+Full list of commands: https://redis.io/commands#pubsub
+
 Pub/Sub has no relation to the key space, so publishing on db 10, will be heard by a subscriber on db 1.
 
 Redis supports two options for subscribtion:
