@@ -22,7 +22,7 @@ Alternatively Redis may use append mode to append each change to file.
 
 Redis always works in a single thread!
 
-REdis strenghts
+Redis strengths:
 - Fast (10-100k+ rps)
 - Simple
 - Lot of data structures
