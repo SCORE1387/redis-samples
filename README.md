@@ -14,6 +14,12 @@
 * [Redis documentation](https://redis.io/documentation)
 * [Redis commands](https://redis.io/commands)
 
+### Overview
+
+Redis stores all data in-memory and periodically flushes it to disk using snapshots (60 seconds by default).
+
+Alternatively Redis may use append mode to append each change to file.
+
 ### Run
 
 Redis uses 6379 port by default.
@@ -112,7 +118,12 @@ There are more useful commands:
 
 ### Data Structures
 
-Redis also supports several more complex data structures. The first one we'll look at is a list. A list is a series of ordered values. Some of the important commands for interacting with lists are `RPUSH`, `LPUSH`, `LLEN`, `LRANGE`, `LPOP`, and `RPOP`. You can immediately begin working with a key as a list, as long as it doesn't already exist as a different type.
+#### Strings
+
+Strings are the most basic data type in Redis.
+Full list of commands: https://redis.io/commands#string
+
+A list is a series of ordered values. Some of the important commands for interacting with lists are `RPUSH`, `LPUSH`, `LLEN`, `LRANGE`, `LPOP`, and `RPOP`. You can immediately begin working with a key as a list, as long as it doesn't already exist as a different type.
 
 `RPUSH` puts the new value at the end of the list.
 
