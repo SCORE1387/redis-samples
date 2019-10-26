@@ -298,34 +298,31 @@ Example:
 
 ### Misc
 
+Show info:
+```
+    INFO
+```
+
 List all matching keys:
 ```
     KEYS pattern
 ```
 
 List clients:
-
 ```
     CLIENT LIST
 ```
 
 Asynchronously save the dataset to disk
-
 ```
     BGSAVE
 ```
 
 Listen for all requests received by the server in real time:
-
 ```
     MONITOR
 ```
 
-Disable some command:
-
-```
-    rename-command FLUSHALL 
-```
 
 ### Replication
 
