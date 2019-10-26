@@ -272,19 +272,33 @@ Numerical values in hash fields are handled exactly the same as in simple string
 
 ### Publish/Subscribe
 
+Pub/Sub has no relation to the key space, so publishing on db 10, will be heard by a subscriber on db 1.
+
+Redis supports two options for subscribtion:
+- subscribe to specific channel
+- subscribe by pattern
+
+Note: a client may receive a single message multiple times if it's subscribed to multiple patterns matching a published message, or if it is subscribed to both patterns and channels matching the message. 
+
+Lists the currently active channels (with one or more subscribers):
 ```
-PUBSUB <subcommand> ... args ...
 PUBSUB CHANNELS [pattern]
+```
+
+Number of subscribers (not counting clients subscribed to patterns):
+```
 PUBSUB NUMSUB [channel-1 ... channel-N]
+```
+
+Subscribe to specified channel or by pattern: 
+```
 PSUBSCRIBE pattern [pattern ...]
 SUBSCRIBE channel [channel ...]
 ```
 
-Example:
-
+Publish message to channel:
 ```
-    redis-client1: subscribe channel1
-    redis-client2: publish channel1 "test str"
+PUBLISH channel1 "Test"
 ```
 
 ### Transactions
