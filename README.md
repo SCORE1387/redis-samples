@@ -24,53 +24,54 @@ Run Redis using docker:
 
 Connect to Redis using redis-cli in docker:
 ```
-    docker exec container-id -it redis-cli
+    docker exec redis -it redis-cli
 ```
 
-### Basics
+### Databases
 
-Redis is what is called a key-value store, often referred to as a NoSQL database. The essence of a key-value store is the ability to store some data, called a value, inside a key. This data can later be retrieved only if we know the exact key used to store it. We can use the command `SET` to store the value "fido" at key "server:name":
+Redis can have up to 15 __databases__ identified by number.
 
+Switch database (0-15 values are allowed):
+```
+    SELECT 1
+```
+
+Clean database:
+```
+    FLUSHDB
+```
+Clean all databases:
+
+```
+    FLUSHALL
+```
+
+Get the number of keys in the selected database:
+```
+    DBSIZE
+```
+
+### Basics 
+
+Set the value:
 ```
     SET server:name "fido"
 ```
 
-Redis will store our data permanently, so we can later ask "What is the value stored at key server:name?" and Redis will reply with "fido":
+Set the value if not exist:
+```
+    SETNX server:name "fido"
+```
 
+Retrieve value:
 ```
     GET server:name => "fido"
 ```
 
----
-
-Other common operations provided by key-value stores are `DEL` to delete a given key and associated value, SET-if-not-exists (called `SETNX` on Redis) that sets a key only if it does not already exist, and `INCR` to atomically increment a number stored at a given key:
-
+Delete value:
 ```
-    SET connections 10
-    INCR connections => 11
-    INCR connections => 12
-    DEL connections
-    INCR connections => 1
+    DEL server:name
 ```
-
----
-
-There is something special about `INCR`. Why do we provide such an operation if we can do it ourself with a bit of code? After all it is as simple as:
-
-```
-    x = GET count
-    x = x + 1
-    SET count x
-```
-
-The problem is that doing the increment in this way will only work as long as there is a single client using the key. See what happens if two clients are accessing this key at the same time:
-
-1. Client A reads count as 10.
-2. Client B reads count as 10.
-3. Client A increments 10 and sets count to 11.
-4. Client B increments 10 and sets count to 11.
-
-We wanted the value to be 12, but instead it is 11! This is because incrementing the value in this way is not an atomic operation. Calling the `INCR` command in Redis will prevent this from happening, because it is an atomic operation. Redis provides many of these atomic operations on different types of data.
 
 ---
 
@@ -79,37 +80,24 @@ Redis can be told that a key should only exist for a certain length of time. Thi
 ```
     SET resource:lock "Redis Demo"
     EXPIRE resource:lock 120
-```
-
-This causes the key resource:lock to be deleted in 120 seconds. You can test how long a key will exist with the `TTL` command. It returns the number of seconds until it will be deleted.
-
-```
-    TTL resource:lock => 113
-    // after 113s
-    TTL resource:lock => -2
+    TTL resource:lock => 119
 ```
 
 The -2 for the `TTL` of the key means that the key does not exist (anymore). A -1 for the `TTL` of the key means that it will never expire. Note that if you `SET` a key, its `TTL` will be reset.
-
-```
-    SET resource:lock "Redis Demo 1"
-    EXPIRE resource:lock 120
-    TTL resource:lock => 119
-    SET resource:lock "Redis Demo 2"
-    TTL resource:lock => -1
-```
 
 ---
 
 There are more useful commands:
 
+`INCR key` - increment values 
+
 `APPEND key value` - appends value to the end of string
 
 `GETRANGE key start end` - get substring
 
-`GETSET key value` - get and set in one operation 
+`GETSET key value` - get current value and set new in one operation 
 
-`MGET key value [key value ...]` - multiple get 
+`MGET key [key ...]` - multiple get 
 
 `MSET key value [key value ...]` - multiple set
 
@@ -307,24 +295,6 @@ Example:
 
 ### Misc
 
-Switch database (0-15 values are allowed):
-
-```
-    SELECT 1
-```
-
-Clean database:
-
-```
-    FLUSHDB
-```
-
-Clean all databases:
-
-```
-    FLUSHALL
-```
-
 List all matching keys:
 ```
     KEYS pattern
@@ -340,12 +310,6 @@ Asynchronously save the dataset to disk
 
 ```
     BGSAVE
-```
-
-Get the number of keys in the selected database:
-
-```
-    DBSIZE
 ```
 
 Listen for all requests received by the server in real time:
