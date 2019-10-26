@@ -121,7 +121,10 @@ There are more useful commands:
 #### Strings
 
 Strings are the most basic data type in Redis.
+
 Full list of commands: https://redis.io/commands#string
+
+#### Lists
 
 A list is a series of ordered values. Some of the important commands for interacting with lists are `RPUSH`, `LPUSH`, `LLEN`, `LRANGE`, `LPOP`, and `RPOP`. You can immediately begin working with a key as a list, as long as it doesn't already exist as a different type.
 
@@ -175,7 +178,11 @@ Note that the list now only has one element:
 
 ---
 
-The next data structure that we'll look at is a set. A set is similar to a list, except it does not have a specific order and each element may only appear once. Some of the important commands in working with sets are `SADD`, `SREM`, `SISMEMBER`, `SMEMBERS` and `SUNION`.
+#### Sets 
+
+A set is similar to a list, except it does not have a specific order and each element may only appear once. 
+
+Some of the important commands in working with sets are `SADD`, `SREM`, `SISMEMBER`, `SMEMBERS` and `SUNION`.
 
 `SADD` adds the given value to the set.
 
@@ -217,6 +224,8 @@ The next data structure that we'll look at is a set. A set is similar to a list,
 ---
 
 Sets are a very handy data type, but as they are unsorted they don't work well for a number of problems. This is why Redis 1.2 introduced Sorted Sets.
+
+#### Sorted Sets
 
 A sorted set is similar to a regular set, but now each value has an associated score. This score is used to sort the elements in the set.
 
