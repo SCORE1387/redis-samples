@@ -22,6 +22,11 @@ Alternatively Redis may use append mode to append each change to file.
 
 Redis always works in a single thread!
 
+REdis strenghts
+- Fast (10-100k+ rps)
+- Simple
+- Lot of data structures
+
 ### Run
 
 Redis uses 6379 port by default.
