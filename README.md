@@ -128,37 +128,35 @@ Full list of commands: https://redis.io/commands#string
 
 A list is a series of ordered values. 
 
-Put the new value at the end of the list
+Put the new value at the end of the list:
 ```
     RPUSH friends "Alice"
     RPUSH friends "Bob"
 ```
 	
-Puts the new value at the start of the list
+Puts the new value at the start of the list:
 ```
     LPUSH friends "Sam"
 ```
 
-`LRANGE` gives a subset of the list. 
+Get a subset of the list (`-1` means to retrieve elements until the end of the list):
 ```
     LRANGE friends 0 -1 => 1) "Sam", 2) "Alice", 3) "Bob"
     LRANGE friends 0 1 => 1) "Sam", 2) "Alice"
     LRANGE friends 1 2 => 1) "Alice", 2) "Bob"
 ```
 
-A value of -1 for the second parameter means to retrieve elements until the end of the list.
-
-Length of the list
+Length of the list:
 ```
     LLEN friends => 3
 ```
 	
-Remove the first element from the list and returns it.
+Remove the first element from the list and returns it:
 ```
     LPOP friends => "Sam"
 ```
 
-Remove the last element from the list and returns it.
+Remove the last element from the list and returns it:
 ```
     RPOP friends => "Bob"
 ```
@@ -167,48 +165,35 @@ Remove the last element from the list and returns it.
 
 A set is similar to a list, except it does not have a specific order and each element may only appear once. 
 
-Some of the important commands in working with sets are `SADD`, `SREM`, `SISMEMBER`, `SMEMBERS` and `SUNION`.
-
-`SADD` adds the given value to the set.
-
+Add the given value to the set:
 ```
     SADD superpowers "flight"
     SADD superpowers "x-ray vision"
     SADD superpowers "reflexes"
 ```
 
-`SREM` removes the given value from the set.
-
+Remove the given value from the set:
 ```
     SREM superpowers "reflexes"
 ```
 
----
-
-`SISMEMBER` tests if the given value is in the set. It returns 1 if the value is there and 0 if it is not.
-
+Test if the given value is in the set (returns 1 if the value is there and 0 if it is not):
 ```
     SISMEMBER superpowers "flight" => 1
     SISMEMBER superpowers "reflexes" => 0
 ```
 
-`SMEMBERS` returns a list of all the members of this set.
-
+List of all the members of this set:
 ```
     SMEMBERS superpowers => 1) "flight", 2) "x-ray vision"
 ```
 
-`SUNION` combines two or more sets and returns the list of all elements.
-
+Combine two or more sets and returns the list of all elements:
 ```
     SADD birdpowers "pecking"
     SADD birdpowers "flight"
     SUNION superpowers birdpowers => 1) "pecking", 2) "x-ray vision", 3) "flight"
 ```
-
----
-
-Sets are a very handy data type, but as they are unsorted they don't work well for a number of problems. This is why Redis 1.2 introduced Sorted Sets.
 
 #### Sorted Sets
 
