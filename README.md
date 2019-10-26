@@ -133,6 +133,8 @@ Full list of commands: https://redis.io/commands#string
 
 A list is a series of ordered values. 
 
+Full list of commands: https://redis.io/commands#list
+
 Put the new value at the end of the list:
 ```
     RPUSH friends "Alice"
@@ -170,6 +172,8 @@ Remove the last element from the list and returns it:
 
 A set is similar to a list, except it does not have a specific order and each element may only appear once. 
 
+Full list of commands: https://redis.io/commands#set
+
 Add the given value to the set:
 ```
     SADD superpowers "flight"
@@ -204,6 +208,8 @@ Combine two or more sets and returns the list of all elements:
 
 A sorted set is similar to a regular set, but now each value has an associated score. This score is used to sort the elements in the set.
 
+Full list of commands: https://redis.io/commands#sorted_set
+
 ```
     ZADD hackers 1940 "Alan Kay"
     ZADD hackers 1906 "Grace Hopper"
@@ -225,14 +231,16 @@ In these examples, the scores are years of birth and the values are the names of
 
 Hashes are maps between string fields and string values.
 
+Full list of commands: https://redis.io/commands#hash
+
+Set data:
 ```
     HSET user:1000 name "John Smith"
     HSET user:1000 email "john.smith@example.com"
     HSET user:1000 password "s3cret"
 ```
 
-To get back the saved data use `HGETALL`:
-
+Get all fileds:
 ```
     HGETALL user:1000
 ```
