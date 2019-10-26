@@ -336,7 +336,7 @@ List clients:
     CLIENT LIST
 ```
 
-Asynchronously save the dataset to disc
+Asynchronously save the dataset to disk
 
 ```
     BGSAVE
