@@ -58,6 +58,11 @@ Get the number of keys in the selected database:
     DBSIZE
 ```
 
+Swap two databases (all the clients connected to a given database will see the data of the other database):
+```
+SWAPDB 0 1
+```
+
 ### Basics 
 
 Set the value:
